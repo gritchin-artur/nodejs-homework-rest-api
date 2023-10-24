@@ -20,7 +20,7 @@ router.get("/:contactId", getById);
 
 router.post("/", validateBody(addSchema), add);
 
-router.delete("/:contactId", validateBody(addSchema), deleteById);
+router.delete("/:contactId", deleteById);
 
 router.put("/:contactId", validateBody(addSchema), updateById);
 
