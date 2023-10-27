@@ -13,7 +13,7 @@ const {
 
 const { validateBody, isValidId } = require("../../middlewares");
 
-const { addSchema, updateFavoriteSchema } = require("../../models/contact");
+const { addSchema, updateFavoriteSchema } = require("../../schema/schema");
 
 router.get("/", getAll);
 
