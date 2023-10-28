@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
@@ -30,5 +31,4 @@ router.patch(
   validateBody(updateFavoriteSchema),
   updateFavorite
 );
-
 module.exports = router;
