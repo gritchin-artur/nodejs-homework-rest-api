@@ -62,9 +62,21 @@ const logout = async (req, res) => {
   res.json({ massage: "Logout success" });
 };
 
+const patchSubscription = async (req, res) => {
+  const { _id, email } = req.user;
+  const { subscription } = req.body;
+  await User.findByIdAndUpdate(_id, { subscription: subscription });
+
+  res.json({
+    email,
+    massage: `Change subscription to ${subscription} success`,
+  });
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   getCurrent: ctrlWrapper(getCurrent),
   logout: ctrlWrapper(logout),
+  patchSubscription: ctrlWrapper(patchSubscription),
 };
