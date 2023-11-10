@@ -1,13 +1,18 @@
 const bcrypt = require("bcrypt");
 const gravatar = require("gravatar");
+const ElasticEmail = require("@elasticemail/elasticemail-client");
 
 const { User } = require("../../models/user.js");
 
-const { HttpError } = require("../../helpers/index.js");
+const { HttpError, sendEmail } = require("../../helpers/index.js");
+const { nanoid } = require("nanoid");
+
+const { BASE_URL, EMAIL_FROM } = process.env;
 
 const register = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+  const verificationCode = nanoid();
 
   if (user) {
     throw HttpError(409, "Email already in use");
@@ -20,10 +25,27 @@ const register = async (req, res) => {
     ...req.body,
     password: hashPassword,
     avatarURL,
+    verificationCode,
   });
 
+  const verifyEmail = {
+    Recipients: [new ElasticEmail.EmailRecipient(email)],
+    Content: {
+      Body: [
+        ElasticEmail.BodyPart.constructFromObject({
+          ContentType: "HTML",
+          Content: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationCode}">Click verify email</a>`,
+        }),
+      ],
+      Subject: "Verify email",
+      From: EMAIL_FROM,
+    },
+  };
+
+  await sendEmail(verifyEmail);
+
   res.status(201).json({
-    emai: newUser.email,
+    email: newUser.email,
     name: newUser.name,
   });
 };
